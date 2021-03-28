@@ -2,13 +2,13 @@ export default {
     srcDir: 'src',
     theme: 'blog',
     plugins: ['blog'],
-    title: '个人博客',
-    description: '欢迎来到我的博客。',
+    title: '小宇的技术博客',
+    description: '欢迎来到我的博客，这里分享了一些学习笔记和技术文章，欢迎一起交流。',
     blog: {
         root: '/posts/',
         social: {
-            github: '',
-            email: '',
+            github: 'https://github.com/tianyu666',
+            email: 'tianyu8125@163.com',
         },
     },
     nav: [
