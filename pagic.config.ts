@@ -28,14 +28,14 @@ export default {
             icon: 'czs-tag-l',
         },
         {
-            text: '关于',
-            link: '/about/index.html',
-            icon: 'czs-about-l',
-        },
-        {
             text: '归档',
             link: '/archives/index.html',
             icon: 'czs-box-l',
+        },
+        {
+            text: '关于',
+            link: '/about/index.html',
+            icon: 'czs-about-l',
         },
         {
             text: '友情链接',
