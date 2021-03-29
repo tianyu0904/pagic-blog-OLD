@@ -11,7 +11,7 @@ tags:
 - Demo: [https://github.com/tianyu666/typescript-demo](https://github.com/tianyu666/typescript-demo)
 
 ## 什么是TypeScript？
-> TypeScript 就是 Typed JavaScript 。和字面意思一样。TypeScript 就是带类型系统的 JavaScript。
+> TypeScript 就是 Typed JavaScript 。和字面意思一样。TypeScript 就是带类型系统的 JavaScript 。
 
 TypeScript 是 JavaScript 的一个超集，由微软开发。可通过编译器转译为 JavaScript 代码。
 
@@ -103,7 +103,7 @@ Hello World!
 
 没错，TypeScript 是 JavaScript 的超集，所以很多表达都是一样的。现在我们来尝试使用一下TypeScript的类型系统。
 
-## TypeScript的类型系统
+## TypeScript原始数据类型
 > TypeScript 的原始数据类型包括：`boolean`、`number`、`string`、`null`、`undefined` 以及 ES6 中的新类型 `Symbol` 和 `BigInt`。、
 
 > Tips: void null undefined
@@ -159,7 +159,7 @@ console.log(sayHello2(user2));
 
 虽然编译器报错，但是在 `outDir` 文件夹中仍正常生成了编译后的文件。如果我们想要在编译错误时不生成文件，则需要在 `tsconfig.json` 中添加 `"noEmitOnError": true` 。
 
-下面，我们将 `sayHello2` 修改为下面的形式
+在项目中，我们一般会对传入参数进行校验，避免因参数错误造成程序崩溃，为此我们将 `sayHello2` 修改为下面的形式。
 
 ```ts
 function sayHello2(person: string) {
@@ -183,3 +183,91 @@ Hello World!
 Hello, Tom
 Hello, Tom
 ```
+
+## TypeScript函数类型
+> 在 JavaScript 中，有两种常见的定义函数的方式——函数声明（Function Declaration）和函数表达式（Function Expression）
+
+一个函数有输入类型和输出类型，要在 TypeScript 中对其进行约束，需要把输入和输出都考虑到。
+
+- JavaScript 中的函数定义、
+
+```js
+// 函数声明（Function Declaration）
+function sum(x, y) {
+  return x + y;
+}
+
+// 函数表达式（Function Expression）
+let mySum = function (x, y) {
+  return x + y;
+};
+
+// ES6 箭头函数
+let mySum2 = (x, y) => {
+  return x + y;
+}
+```
+
+- TypeScript 中的函数定义
+
+```ts
+function sum(x: number, y: number): number {
+  return x + y;
+}
+
+let mysum: (x: number, y: number) => number = function (x: number, y: number): number {
+  return x + y;
+}
+
+let mysum2: (x: number, y: number) => number = (x: number, y: number): number => {
+  return x + y;
+}
+```
+
+> Tips: 这里需要注意一点，TypeScript的 `=>` 和ES6 中的 `=>` 具有不用的意义。TypeScript 中 `=>` 用来表示函数的定义，左边为输入类型，右边为输出类型。ES6 中 `=>` 被称为箭头函数，可以参考 [ES6 中的箭头函数](http://es6.ruanyifeng.com/#docs/function#%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0)。
+
+上边的代码中 `(x: number, y: number) => number` 为一个整体，跟在 `:` 后面，用来修饰前面的变量。指定了该函数的输入值类型和输出值类型。
+
+- TypeScript 中的函数重载
+> 重载函数：在相同的声明域中的函数名相同的，而参数表不同的，即通过函数的参数表而唯一标识并且来区分函数的一种特殊的函数。
+
+例如，我们要实现一个函数 `reverse` , 目的是将输入的参数倒序输出。
+
+```ts
+function reverse(x: number | string): number | string {
+  if (typeof x === 'number') {
+    return Number(x.toString().split('').reverse().join(''));
+  } else if (typeof x === 'string') {
+    return x.split('').reverse().join('');
+  } else {
+    throw new Error('parameter is not number or string');
+  }
+}
+```
+> Tips: `number | string` 此处为 TypeScript 联合类型，表示允许的类型是 `number` 或 `string` ，不能是其他类型。
+
+上面的代码会出现一个问题，不能精确的表达函数的意义，输入为数字是，输出也为数字，输入为字符串时，输出也为字符串。
+
+这时我们可以重载定义多个 `reverse` 的函数类型。
+
+```ts
+function reverse(x: number): number;
+function reverse(x: string): string;
+function reverse(x: number | string): number | string {
+  if (typeof x === 'number') {
+    return Number(x.toString().split('').reverse().join(''));
+  } else if (typeof x === 'string') {
+    return x.split('').reverse().join('');
+  } else {
+    throw new Error('parameter is not number or string');
+  }
+}
+```
+我们重复定义了多次函数 reverse，前几次都是函数定义，最后一次是函数实现。在编辑器的代码提示中，可以正确的看到前两个提示(+1 overload)。
+
+> Tips: TypeScript 会优先从最前面的函数定义开始匹配，所以多个函数定义如果有包含关系，需要优先把精确的定义写在前面。
+
+## 参考
+- [TypeScript](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html)（[中文版](https://zhongsp.gitbooks.io/typescript-handbook/content/doc/handbook/tsconfig.json.html)）
+- [TypeScript 入门教程](https://ts.xcatliu.com/introduction/what-is-typescript.html)
+- [ESLint](https://eslint.org/)
