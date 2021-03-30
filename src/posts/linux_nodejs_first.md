@@ -107,6 +107,7 @@ $ sudo apt upgrade
 $ sudo apt install git
 $ sudo apt install lrzsz
 $ sudo apt install tmux
+$ sudo apt install zip unzip
 ```
 
 配置Git用户信息
@@ -205,22 +206,59 @@ $ sudo nginx -t
 ```shell
 $ cd /etc/nginx
 $ sudo mkdir include
-$ sudo mkdir cert
+$ sudo mkdir certs
 $ sudo vim nginx.conf
 ```
 
-上面的命令打开了nginx文件夹，并打开了nginx配置文件。下面在文件中添加如下配置。
+上面的命令打开了nginx文件夹，并打开了nginx配置文件。在文件中 `http` 区块内添加如下配置。
 
 ```shell
 # self config
-include /etc/nginx/tianyu007.com/*.conf;
+include /etc/nginx/include/*.conf;
 ```
 
 > tips: include 文件夹存放个人配置文件，建议使用域名作为配置文件的文件名。
 
-> tips: cert 文件夹存放证书文件。
+> tips: certs 文件夹存放证书文件。
 
 - 反向代理
+
+下面是一个 https 的反向代理，将访问本台服务器的http链接根据域名匹配规则代理到本机指定端口的服务。
+
+```shell
+server {
+    listen 443 ssl;
+    server_name $host;
+    # ssl on;
+    ssl_certificate certs/$host.crt;
+    ssl_certificate_key certs/$host.key;
+    ssl_session_timeout 5m;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
+    ssl_prefer_server_ciphers on;
+    location / {
+      proxy_pass http://127.0.0.1:40000;
+    }
+}
+```
+
+- 基本命令
+
+下面是常见的几个Nginx命令。
+
+```shell
+# 验证配置文件是否正确
+sudo nginx -t
+
+# 启动nginx
+sudo nginx
+
+# 重启nginx
+sudo nginx -s reload
+
+# 关闭nginx
+sudo nginx -s stop
+```
 
 ## Node.js 安装和配置
 
