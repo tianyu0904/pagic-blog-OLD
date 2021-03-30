@@ -105,6 +105,8 @@ $ cat .ssh/id_rsa.pub
 $ sudo apt update
 $ sudo apt upgrade
 $ sudo apt install git
+$ sudo apt install lrzsz
+$ sudo apt install tmux
 ```
 
 配置Git用户信息
@@ -182,6 +184,43 @@ colorscheme wombat256grf
 ```
 
 ## Nginx 安装和配置
+> Nginx(engine x) 是一个高性能的HTTP和反向代理web服务器，同时也提供了IMAP/POP3/SMTP服务。
+
+- Nginx 安装
+
+输入以下命令安装Nginx
+
+```shell
+$ sudo apt-get install nginx
+```
+
+输入以下命令检测Nginx是否安装成功
+
+```shell
+$ sudo nginx -t
+```
+
+- Nginx 设置
+
+```shell
+$ cd /etc/nginx
+$ sudo mkdir include
+$ sudo mkdir cert
+$ sudo vim nginx.conf
+```
+
+上面的命令打开了nginx文件夹，并打开了nginx配置文件。下面在文件中添加如下配置。
+
+```shell
+# self config
+include /etc/nginx/tianyu007.com/*.conf;
+```
+
+> tips: include 文件夹存放个人配置文件，建议使用域名作为配置文件的文件名。
+
+> tips: cert 文件夹存放证书文件。
+
+- 反向代理
 
 ## Node.js 安装和配置
 
