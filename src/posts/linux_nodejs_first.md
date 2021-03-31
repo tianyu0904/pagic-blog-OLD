@@ -261,5 +261,25 @@ sudo nginx -s stop
 ```
 
 ## Node.js 安装和配置
+> Node.js 是一个基于Chrome V8引擎的JavaScript运行环境，使用了一个事件驱动、非阻塞式I/O模型。
+
+> Npm 的全称是Node Package Manager，是一个NodeJS包管理和分发工具.
+
+使用下面命令安装 `nodejs` 和 `npm`
+
+```shell
+$ sudo apt install nodejs
+$ sudo apt install npm
+```
+
+安装完成后可以使用下面的命令查看安装版本
+
+```shell
+$ node --version
+$ npm -v
+```
+Ubuntu 20.04 apt 内置的`Node`版本是`v10.19.0`。`Npm`版本是`6.14.4`。
+
+如果需要其他版本的Node，可以使用node.js 版本管理工具 `n`。
 
 ## 使用 pm2 部署 Node.js 项目
