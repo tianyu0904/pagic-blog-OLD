@@ -6,6 +6,10 @@ tags:
   - Node.js
 ---
 
+[^_^]:
+2021-03-29 13:15:48 简介 安装 类型系统
+2021-03-29 13:29:12 函数类型
+
 # 从零开始的Node.js (01) - 初识TypeScript
 
 - Demo: [https://github.com/tianyu666/typescript-demo](https://github.com/tianyu666/typescript-demo)
