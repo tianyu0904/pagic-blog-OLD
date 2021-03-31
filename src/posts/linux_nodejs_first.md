@@ -12,6 +12,7 @@ tags:
 2021-03-30 23:56:21 Nginx安装
 2021-03-31 02:34:44 Nginx反向代理 Nginx基本命令
 2021-03-31 10:39:55 NodeJS Npm 安装
+2021-03-31 13:57:24 pm2 安装与使用
 </div>
 
 # Linux 服务器初始化过程（Node.js）
@@ -230,7 +231,7 @@ include /etc/nginx/include/*.conf;
 
 - 反向代理
 
-下面是一个 https 的反向代理，将访问本台服务器的http链接根据域名匹配规则代理到本机指定端口的服务。
+下面是一个 https 反向代理的例子，Nginx将访问本台服务器的http链接根据域名匹配规则代理到本机指定端口的服务。
 
 ```shell
 server {
@@ -290,3 +291,96 @@ Ubuntu 20.04 apt 内置的`Node`版本是`v10.19.0`。`Npm`版本是`6.14.4`。
 如果需要其他版本的Node，可以使用node.js 版本管理工具 `n`。
 
 ## 使用 pm2 部署项目
+> pm2 是一个带有负载均衡功能的Node应用的进程管理器.它可以永久保持应用程序活跃，无需停机即可重新加载它们。
+
+- 使用理由
+
+1. 日志管理：应用程序日志保存在服务器的硬盘中~/.pm2/logs/
+
+2. 负载均衡：PM2可以通过创建共享同一服务器端口的多个子进程来扩展您的应用程序。这样做还允许您以零秒停机时间重新启动应用程序。
+
+3. 终端监控：可以在终端中监控您的应用程序并检查应用程序运行状况（CPU使用率，使用的内存，请求/分钟等）。
+
+4. SSH部署：自动部署，避免逐个在所有服务器中进行ssh。
+
+5. 静态服务：支持静态服务器功能
+
+- 安装
+
+最常见的安装方式是使用npm包管理器。
+
+```shell
+$ npm install -g pm2
+```
+
+上面的命令将全局安装pm2包。可使用 `npm -v` 查看pm2的安装版本。
+
+- 使用
+
+我们新建一个简单的node服务器。
+
+```shell
+$ mkdir test
+$ cd test
+$ npm init
+```
+
+以上命令会在当前文件夹下新建一个test文件夹，同时完成了npm初始化，生成了 `package.json` 文件。
+
+编写 `server.js` 文件
+
+```js
+const http = require('http');
+
+const port = 3000;
+
+const server = http.createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/plain');
+  res.end('Hello World\n');
+})
+
+server.listen(port, () => {
+  console.log(`服务器运行在本地 ${port} 端口`);
+});
+```
+
+使用node的方式启动服务器：
+
+```shell
+$ node server.js
+```
+
+这时打开浏览器，输入IP地址和端口，就可以成功访问到服务器了。
+> tips 无法访问请在服务器控制台中为所需端口开放入站权限
+
+这时我们发现，由于 node 服务器正在运行，我们无法使用命令行。一但断开连接，服务器也将停止运行。我们可以使用pm2来管理node服务器。
+
+Ctrl+C 关闭刚刚使用 node 命令启动的服务器。现在我们使用 pm2 来启动服务。
+
+```shell
+$ pm2 start server.js --name testserver
+```
+
+使用命令后我们会看到当前 pm2 的工作状态。包括运行了几个 node 服务，服务状态，重启次数等信息。
+
+而且我们现在可以正常使用命令行，相当于 pm2帮我们托管了 node 服务。
+
+下面介绍一下常用的 pm2 命令
+
+```shell
+# 启动
+pm2 start ${filename} --name ${showname}
+
+# 重新加载
+pm2 reload ${pid}|all
+
+# 删除服务
+pm2 del ${pid}|all
+
+# 停止服务
+pm2 stop ${pid}|all
+
+# 查看日志
+pm2 log
+```
