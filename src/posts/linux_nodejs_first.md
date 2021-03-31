@@ -5,15 +5,13 @@ tags:
   - Linux
   - Ubuntu
   - Node.js
+timeline:
+  - 2021-03-30 23:31:56 基本配置 Git SSH VIM
+  - 2021-03-30 23:56:21 Nginx安装
+  - 2021-03-31 02:34:44 Nginx反向代理 Nginx基本命令
+  - 2021-03-31 10:39:55 NodeJS Npm 安装
+  - 2021-03-31 13:57:24 pm2 安装与使用
 ---
-
-<div style='display: none'>
-2021-03-30 23:31:56 基本配置 Git SSH VIM
-2021-03-30 23:56:21 Nginx安装
-2021-03-31 02:34:44 Nginx反向代理 Nginx基本命令
-2021-03-31 10:39:55 NodeJS Npm 安装
-2021-03-31 13:57:24 pm2 安装与使用
-</div>
 
 # Linux 服务器初始化过程（Node.js）
 > 本教程基于Ubuntu 20.04 64位操作系统

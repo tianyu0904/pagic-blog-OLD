@@ -4,12 +4,10 @@ categories:
 tags:
   - TypeScript
   - Node.js
+timeline:
+  - 2021-03-29 13:15:48 简介 安装 类型系统
+  - 2021-03-29 13:29:12 函数类型
 ---
-
-<div style='display: none'>
-2021-03-29 13:15:48 简介 安装 类型系统
-2021-03-29 13:29:12 函数类型
-</div>
 
 # 从零开始的Node.js (01) - 初识TypeScript
 
