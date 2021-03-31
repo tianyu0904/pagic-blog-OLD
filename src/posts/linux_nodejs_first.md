@@ -384,3 +384,7 @@ pm2 stop ${pid}|all
 # 查看日志
 pm2 log
 ```
+
+## 参考
+- [Linux服务器的初步配置流程-阮一峰](http://www.ruanyifeng.com/blog/2014/03/server_setup.html)
+- [修改linux终端命令行各字体颜色-QuintinX](https://www.cnblogs.com/Q--T/p/5394993.html)
