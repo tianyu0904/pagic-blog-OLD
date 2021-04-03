@@ -11,8 +11,6 @@ timeline:
 
 # 从零开始的Node.js (01) - 初识TypeScript
 
-- Demo: [https://github.com/tianyu666/typescript-demo](https://github.com/tianyu666/typescript-demo)
-
 ## 什么是TypeScript？
 > TypeScript 就是 Typed JavaScript 。和字面意思一样。TypeScript 就是带类型系统的 JavaScript 。
 
@@ -271,6 +269,7 @@ function reverse(x: number | string): number | string {
 > Tips: TypeScript 会优先从最前面的函数定义开始匹配，所以多个函数定义如果有包含关系，需要优先把精确的定义写在前面。
 
 ## 参考
+- [本文相关示例 github](https://github.com/tianyu666/typescript-demo)
 - [TypeScript](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html)（[中文版](https://zhongsp.gitbooks.io/typescript-handbook/content/doc/handbook/tsconfig.json.html)）
 - [TypeScript 入门教程](https://ts.xcatliu.com/introduction/what-is-typescript.html)
 - [ESLint](https://eslint.org/)

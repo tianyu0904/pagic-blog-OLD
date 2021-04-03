@@ -14,8 +14,6 @@ timeline:
 # Node.js 如何实现文件的上传下载（导入导出）。
 > 文件操作是每个服务端程序员都会遇到的需求。那么如何在Node.js环境下使用Koa-body来完成文件的上传和下载呢，本文将一步一步引导大家完成这个功能。
 
-- Demo: [https://github.com/tianyu666/typescript-demo](https://github.com/tianyu666/typescript-demo)
-
 ## 开发环境准备
 
 我们这次的目的是完成一个文件处理的Demo，所以不需要额外的服务器，只需要本地的开发环境即可。
@@ -33,6 +31,8 @@ timeline:
 ## 本地到服务器
 
 ## 参考
+- [本文相关示例 github](https://github.com/tianyu666/typescript-demo)
+
 
 <footer>
   <nav class="navbar-fixed-bottom text-center navbar-default">

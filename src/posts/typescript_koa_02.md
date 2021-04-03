@@ -11,11 +11,8 @@ timeline:
 
 # 从零开始的Node.js (02) - Koa 框架
 
-- Demo: [https://github.com/tianyu666/typescript-demo](https://github.com/tianyu666/typescript-demo)
-
 ## 什么是Koa
-
-- Koa 是一个新的 web 框架，由 Express 幕后的原班人马打造， 致力于成为 web 应用和 API 开发领域中的一个更小、更富有表现力、更健壮的基石。 通过利用 async 函数，Koa 帮你丢弃回调函数，并有力地增强错误处理。 Koa 并没有捆绑任何中间件， 而是提供了一套优雅的方法，帮助您快速而愉快地编写服务端应用程序。
+> Koa 是一个新的 web 框架，由 Express 幕后的原班人马打造， 致力于成为 web 应用和 API 开发领域中的一个更小、更富有表现力、更健壮的基石。 通过利用 async 函数，Koa 帮你丢弃回调函数，并有力地增强错误处理。 Koa 并没有捆绑任何中间件， 而是提供了一套优雅的方法，帮助您快速而愉快地编写服务端应用程序。
 
 Koa是一个类似于Express的Web开发框架，创始人也是同一个人。它的主要特点是，使用了ES6的Generator函数，进行了架构的重新设计。也就是说，Koa的原理和内部结构很像Express，但是语法和内部结构进行了升级。
 
@@ -87,6 +84,9 @@ typescript-demo
 启动服务器后，在浏览器地址栏输入 `localhost:3000/` 即可访问到服务器。
 
 ## 中间件
+
+## 参考
+- [本文相关示例 github](https://github.com/tianyu666/typescript-demo)
 
 
 <footer>
