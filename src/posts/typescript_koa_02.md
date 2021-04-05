@@ -92,7 +92,7 @@ typescript-demo
 <footer>
   <nav class="navbar-fixed-bottom text-center navbar-default">
     <text style="font-size: 14px;">Copyright © 2019-2021 tianyu007.com. All rights reserved. </text>
-    <a href="http://www.beian.miit.gov.cn" style="font-size: 12px;">辽ICP备15016458号</a>
+    <a href="https://beian.miit.gov.cn" style="font-size: 12px;">辽ICP备15016458号</a>
     <script type="text/javascript">
       var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");
       document.write(unescape("%3Cspan id='cnzz_stat_icon_1258928019'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1258928019%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));
