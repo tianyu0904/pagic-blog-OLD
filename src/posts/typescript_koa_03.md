@@ -9,6 +9,7 @@ timeline:
   - 2021-04-05 23:30:28 创建文档
   - 2021-04-05 00:27:30 Mysql数据库连接
   - 2021-04-05 00:38:10 方法类需求分析
+  - 2021-04-05 01:12:30 方法类初始化代码
 ---
 
 # 从零开始的Node.js (03) - MySql
@@ -79,6 +80,51 @@ const sqlQuery = (sql: string) => {
 
 确定了方法的基本信息后，我们开始编写。打开`mysql.service.ts`
 
+```ts
+import mysql from 'mysql';
+
+class MysqlHelper {
+  private conn;
+  private table;
+  constructor(database: string, table: string) {
+    this.conn = mysql.createConnection({
+      host: "localhost",
+      user: "root",
+      password: "19990529",
+      port: 3306,
+      database: database
+    });
+    this.table = table;
+  }
+  // 初始化后需执行该方法建立连接
+  connect() {
+    this.conn.connect((err) => {
+      if (err) {
+        console.log(this.table + " 连接失败");
+        // 重新连接
+        setTimeout(this.conn.connect, 2000);
+        return;
+      }
+      console.log(this.table + " 连接成功");
+      // 定时监控
+      setInterval(() => {
+        console.log('ping...');
+        this.conn.ping((err) => {
+          if (err) {
+            console.log('ping error: ' + JSON.stringify(err));
+          }
+        });
+      }, 600000);
+    })
+  }
+}
+
+exports.MysqlHelper = MysqlHelper;
+```
+
+上面的代码是你初始化过程。先连接数据库，然后定时监控，出现错误后自动重连。
+
+接下来我们继续编写具体的操作方法。
 
 ## 优化mysql方法类
 
