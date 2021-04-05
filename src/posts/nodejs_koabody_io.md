@@ -76,10 +76,161 @@ timeline:
 
 ## 文件的保存
 
+学会了如何读取文件，那当然也要会写文件。一些需要保存的数据可以写到文件中保存，以便后期查看。
+
+新建文件 file_save.ts
+
+```ts
+  import fs from 'fs';
+
+  const date = Date.now();
+
+  const info = {
+    fileName: "testfile.json",
+    createtime: date,
+    data: [
+      {
+        firstname: "aaa",
+        lastname: "aaa"
+      },
+      {
+        firstname: "bbb",
+        lastname: "bbb"
+      }
+    ]
+  }
+
+  // 异步写入
+  console.log("异步文件写入开始");
+  fs.writeFile('./public/file_saved/write_1.json', JSON.stringify(info), function (err) {
+    if (err) {
+      return console.error(err);
+    }
+    console.log("异步写入成功！");
+  });
+  console.log("异步文件写入结束");
+
+  // 同步写入
+  console.log("同步文件写入开始");
+  fs.writeFileSync('./public/file_saved/write_2.json', JSON.stringify(info));
+  console.log("同步写入成功！");
+  console.log("同步文件写入结束");
+```
+
+上面就是利用 fs 写文件的方法。使用 `tsc` 编译，然后使用 `node` 命令运行。
+
+> Tips: 这种写文件的方式只适用于新建文件夹。如果存放位置已存在同名文件，则会被覆盖。
+
 ## 本地到服务器
+
+简单的文件读取和写入我们已经在上面尝试过了，下面我们来模拟一下用户从本地上传文件到服务器的过程。
+
+首先我们先新建一个 html 文件供用户上传。
+
+```html
+ <html>
+ <head><title>文件上传</title></head>
+  <body>
+    <form action="http://localhost:3000/api/upload" method="post" enctype="multipart/form-data">
+      <input type="file" name="file" id="file" value="" multiple="multiple" />
+      <input type="submit" value="提交"/>
+    </form>
+  </body>
+ </html>
+```
+
+前端部分比较简单，只需要一个form就可以搞定。下面我们来看后端如何实现。
+
+首先在 koa 中间件中添加 KoaBody 引用
+> Tips `Koa-Body` 中间件需要在路由之前，否则可能出现读取不到文件的情况
+
+```ts
+  import KoaBody from "koa-body";
+
+  app.use(KoaBody({
+    multipart: true,  // 多文件上传
+    formidable: {
+      maxFileSize: 10 * 1024 * 1024 * 1024  // 文件大小限制
+    }
+  }));
+```
+
+然后设置路由，对外提供一个Url上传地址
+
+```ts
+router.post('/api/upload', async (ctx) => {
+
+})
+```
+
+接下来我们准备一些文件操作的工具方法。
+
+> 生成文件夹（此处按时间分类）。
+```ts
+  const getUploadDirName: () => string = (): string => {
+    const date = new Date();
+    const monthNumber: number = date.getMonth() + 1;
+    const month: string = monthNumber.toString().length > 1 ? monthNumber.toString() : `0${monthNumber}`;
+    const dir: string = `${date.getFullYear()}${month}${date.getDate()}`;
+    return path.join('./public/file_upload/', dir);
+  }
+```
+> 检查文件夹路径是否存在，如果不存在则创建文件夹(此处不支持创建多级文件夹)。
+```ts
+  const checkDirExist: (dir: string) => void = (dir: string): void => {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+  }
+```
+> 生成新的文件名(如果不改变文件名，此方法可以忽略)。
+```ts
+  const getNewFileName: (name: string) => string = (name: string): string => {
+    const now = Date.now();
+    const ext = name.split('.');
+    const newname = md5(`${name}|${now}`);
+    const filename = `${newname}.${ext[ext.length - 1]}`;
+    return filename;
+  }
+```
+
+工具类创建好之后，我们就要对传进来的数据进行处理啦。
+
+```ts
+  router.post('/api/upload', async (ctx) => {
+    if (!ctx.request.files) {
+      console.log('上传的文件为空！');
+      return;
+    }
+    const data = ctx.request.files.file;
+    let files = [];
+    if (!Array.isArray(data)) {
+      files.push(data);
+    } else {
+      files = data
+    }
+    files.forEach((element) => {
+      // 创建可读流
+      const reader = fs.createReadStream(element.path);
+      // 确认文件存储位置
+      const filePath = getUploadDirName();
+      checkDirExist(filePath);
+      // 新的文件名
+      const fileName = getNewFileName(`${element.name}`);
+      // 创建可写流
+      const upStream = fs.createWriteStream(`${filePath}/${fileName}`);
+      // 可读流通过管道写入可写流
+      reader.pipe(upStream);
+    });
+    return ctx.body = "上传成功！";
+  });
+```
+
+运行 npm run dev 之后，打开之前创建好的 html 文件，选好文件点击上传，就可以在服务端文件夹看到上传的文件啦。
 
 ## 参考
 - [本文相关示例 github](https://github.com/tianyu666/typescript-demo)
+- [NodeJs koa2实现文件上传](https://www.jianshu.com/p/34d0e1a5ac70)
 
 
 <footer>
