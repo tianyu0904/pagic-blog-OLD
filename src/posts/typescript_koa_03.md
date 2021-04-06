@@ -202,10 +202,49 @@ export class MysqlHelper {
 
 3. 修改操作
 ```ts
+  async update(selectObj: any, updateObj: any) {
+    //注意，这里的updateObj没必要把所有参数穿进去，只要把需要更新的字段和值传进来就可以，Kid就可以帮你补全剩下的数据了
+    const data: any = await this.select(selectObj)
+    if (data.length == 0) {
+      throw new Error('update错误，没有匹配到数据');
+    }
+    const oldData = data[0];
+    //获取旧数据，比较新旧数据的键是否匹配
+    var str = `update ${this.table} set `;
+    for (let u in updateObj) {
+      //用旧数据的键比对传参的键
+      if (oldData[u] === undefined)
+      throw new Error('update错误，输入键和源数据不匹配');;
+      oldData[u] = updateObj[u];
+    }
+    //区分类型
+    for (let o in oldData) {
+      if (typeof (oldData[o]) == 'string')
+        str += `${o} = '${oldData[o]}',`;
+      else
+        str += `${o} = ${oldData[o]},`;
+    }
+    str = str.substr(0, str.length - 1);
+    str += ` where `;
+    for (var i in selectObj) {
+      if (typeof (selectObj[i]) == "string") {
+        str += `${i}='${selectObj[i]}' and `;
+      }
+      else {
+        str += `${i}=${selectObj[i]} and `;
+      }
+    }
+    // 清除最后的多余字段
+    str = str.substr(0, str.length - 4);
+    return createAsyncAction(this.conn, str)
+  }
 ```
 
 使用方法
 ```ts
+  await mysqlConn.update({"id": 1}, {"lastname": "newlast"});
+  const newresult = await mysqlConn.select({"id": 1});
+  console.log(newresult);
 ```
 
 4. 删除操作
