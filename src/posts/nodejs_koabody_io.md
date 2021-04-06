@@ -169,7 +169,7 @@ router.post('/api/upload', async (ctx) => {
 
 > 生成文件夹（此处按时间分类）。
 ```ts
-  const getUploadDirName: () => string = (): string => {
+  const getDirName: () => string = (): string => {
     const date = new Date();
     const monthNumber: number = date.getMonth() + 1;
     const month: string = monthNumber.toString().length > 1 ? monthNumber.toString() : `0${monthNumber}`;
@@ -187,7 +187,7 @@ router.post('/api/upload', async (ctx) => {
 ```
 > 生成新的文件名(如果不改变文件名，此方法可以忽略)。
 ```ts
-  const getNewFileName: (name: string) => string = (name: string): string => {
+  const getFileName: (name: string) => string = (name: string): string => {
     const now = Date.now();
     const ext = name.split('.');
     const newname = md5(`${name}|${now}`);
@@ -215,10 +215,12 @@ router.post('/api/upload', async (ctx) => {
       // 创建可读流
       const reader = fs.createReadStream(element.path);
       // 确认文件存储位置
-      const filePath = getUploadDirName();
+      const rootPath = path.join('./public/file_upload/');
+      checkDirExist(rootPath);
+      const filePath = path.join(rootPath, getDirName());
       checkDirExist(filePath);
       // 新的文件名
-      const fileName = getNewFileName(`${element.name}`);
+      const fileName = getFileName(`${element.name}`);
       // 创建可写流
       const upStream = fs.createWriteStream(`${filePath}/${fileName}`);
       // 可读流通过管道写入可写流
@@ -229,6 +231,50 @@ router.post('/api/upload', async (ctx) => {
 ```
 
 运行 npm run dev 之后，打开之前创建好的 html 文件，选好文件点击上传，就可以在服务端文件夹看到上传的文件啦。
+
+上面的是异步多文件保存的例子。下面是使用Promise方法，单文件上传同步返回结果的例子。
+```ts
+  router.post('/api/uploadsingle', async (ctx) => {
+    if (!ctx.request.files || JSON.stringify(ctx.request.files.file) == '{}' || !ctx.request.files.file) {
+      throw new Error('未读取到文件');
+    }
+    const file = ctx.request.files.file;
+    if (Array.isArray(file)) {
+      throw new Error('仅支持单文件上传');
+    }
+    if (file.size < 1000) {
+      throw new Error('文件小于1kb');
+    }
+    const rootPath = path.join('./public/file_upload/');
+    checkDirExist(rootPath);
+    const filePath = path.join(rootPath, getDirName());
+    const fileName = getFileName(file.name ? file.name : '');
+    checkDirExist(filePath);
+    await saveFile(file, `${filePath}/${fileName}`).then(() => {
+      // do something like upload file to cloud.
+      ctx.body = '上传成功';
+    }).catch((err) => {
+      throw new Error(err.message);
+    });
+  });
+```
+这里使用了 `saveFile` 方法， 该方法返回了一个Promise对象。
+```ts
+  const saveFile = (file: any, path: string) => {
+    return new Promise((resolve, reject) => {
+      const reader = fs.createReadStream(file.path);
+      // console.log({ name: file.name, size: file.size, path: `${filePath}/${fileName}` });
+      const writeStream = fs.createWriteStream(path);
+      reader.pipe(writeStream);
+      writeStream.on('finish', () => {
+        resolve(true);
+      });
+      writeStream.on('error', (err) => {
+        reject(err);
+      });
+    });
+  }
+```
 
 ## 参考
 - [本文相关示例 github](https://github.com/tianyu666/typescript-demo)
