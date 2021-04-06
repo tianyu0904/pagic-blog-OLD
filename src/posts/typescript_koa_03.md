@@ -7,9 +7,10 @@ tags:
   - TypeOrm
 timeline:
   - 2021-04-05 23:30:28 创建文档
-  - 2021-04-05 00:27:30 Mysql数据库连接
-  - 2021-04-05 00:38:10 方法类需求分析
-  - 2021-04-05 01:12:30 方法类初始化代码
+  - 2021-04-06 00:27:30 Mysql数据库连接
+  - 2021-04-06 00:38:10 方法类需求分析
+  - 2021-04-06 01:12:30 方法类初始化代码
+  - 2021-04-06 16:11:12 插入方法
 ---
 
 # 从零开始的Node.js (03) - MySql
@@ -43,7 +44,7 @@ npm install --save-dev @types/mysql
   export default defaultConfig
 ```
 
-然后在 service 文件夹新建 mysql 的处理文件`mysql.service.ts`
+然后在 service 文件夹新建 mysql 的处理文件`mysql.query.ts`
 
 ```ts
 import mysql from 'mysql';
@@ -78,22 +79,17 @@ const sqlQuery = (sql: string) => {
 
 方法名确定之后，我们来考虑一下需要传入什么参数。首先是`数据库名`、`表名`，然后是我们要操作的`字段`，对于添加和修改来说，还需要字段的`值`。
 
-确定了方法的基本信息后，我们开始编写。打开`mysql.service.ts`
+确定了方法的基本信息后，我们开始编写。打开`mysql.helper.ts`
 
 ```ts
 import mysql from 'mysql';
+import mysqlConf from '../config/mysql.config';
 
-class MysqlHelper {
+export class MysqlHelper {
   private conn;
   private table;
   constructor(database: string, table: string) {
-    this.conn = mysql.createConnection({
-      host: "localhost",
-      user: "root",
-      password: "19990529",
-      port: 3306,
-      database: database
-    });
+    this.conn = mysql.createConnection(mysqlConf);
     this.table = table;
   }
   // 初始化后需执行该方法建立连接
@@ -115,16 +111,80 @@ class MysqlHelper {
           }
         });
       }, 600000);
-    })
+    });
   }
 }
-
-exports.MysqlHelper = MysqlHelper;
 ```
 
 上面的代码是你初始化过程。先连接数据库，然后定时监控，出现错误后自动重连。
 
 接下来我们继续编写具体的操作方法。
+
+1. 插入操作
+```ts
+  insert(insertObj: any) {
+    var addKey = [];
+    var addVal = [];
+    //解析insertObj对象，拆分为数组方便后续处理
+    for (let i in insertObj) {
+      addKey.push(i);
+      addVal.push(insertObj[i]);
+    }
+    //键值对不匹配，返回错误文档。
+    if (addKey.length != addVal.length) {
+      throw new Error('insert错误，列和值数目不匹配');
+    }
+    //拼接SQL字符串
+    var str = `insert into ${this.table} (`;
+    for (let i = 0; i < addKey.length; i++) {
+      str += addKey[i] + ",";
+    }
+    str = str.substr(0, str.length - 1);
+    str += ") values (";
+    //判断value类型，Mysql区分数字和字符
+    for (let i = 0; i < addVal.length; i++) {
+      if (typeof (addVal[i]) == "string")
+        str += "'" + addVal[i] + "',";
+      else
+        str += +addVal[i] + ",";
+    }
+    str = str.substr(0, str.length - 1);
+    str += ");";
+    //真查询+异步回调
+    return createAsyncAction(this.conn, str)
+  }
+```
+
+使用方法
+```ts
+  const mysqlConn = new MysqlHelper('test', 'user1');
+  mysqlConn.connect();
+  await mysqlConn.insert({
+    "firstname": "first",
+    "lastname": "last"
+  })
+```
+
+2. 查询操作
+```ts
+```
+使用方法
+```ts
+```
+
+3. 修改操作
+```ts
+```
+使用方法
+```ts
+```
+
+4. 删除操作
+```ts
+```
+使用方法
+```ts
+```
 
 ## 优化mysql方法类
 
