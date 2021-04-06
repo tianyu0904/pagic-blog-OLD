@@ -11,6 +11,7 @@ timeline:
   - 2021-04-06 00:38:10 方法类需求分析
   - 2021-04-06 01:12:30 方法类初始化代码
   - 2021-04-06 16:11:12 插入方法
+  - 2021-04-06 16:20:49 查询方法
 ---
 
 # 从零开始的Node.js (03) - MySql
@@ -167,14 +168,42 @@ export class MysqlHelper {
 
 2. 查询操作
 ```ts
+  select(queryObj: any) {
+    var str = "";
+    if (queryObj == {}) {
+      str = `select * from ${this.table}`
+    }
+    else {
+      str = `select * from ${this.table} where `;
+      // 区分类型
+      for (var i in queryObj) {
+        if (typeof (queryObj[i]) == "string") {
+          str += `${i}='${queryObj[i]}' and `;
+        }
+        else {
+          str += `${i}=${queryObj[i]} and `;
+        }
+      }
+      // 清除最后的多余字段
+      str = str.substr(0, str.length - 4);
+    }
+    //返回promise
+    return createAsyncAction(this.conn, str)
+  }
 ```
+
 使用方法
 ```ts
+  const mysqlConn = new MysqlHelper('test', 'user1');
+  mysqlConn.connect();
+  const result = await mysqlConn.select({"id": 1});
+  console.log(result);
 ```
 
 3. 修改操作
 ```ts
 ```
+
 使用方法
 ```ts
 ```
@@ -182,6 +211,7 @@ export class MysqlHelper {
 4. 删除操作
 ```ts
 ```
+
 使用方法
 ```ts
 ```
