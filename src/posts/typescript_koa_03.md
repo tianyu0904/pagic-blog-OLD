@@ -12,6 +12,7 @@ timeline:
   - 2021-04-06 01:12:30 方法类初始化代码
   - 2021-04-06 16:11:12 插入方法
   - 2021-04-06 16:20:49 查询方法
+  - 2021-04-06 17:17:23 修改方法
 ---
 
 # 从零开始的Node.js (03) - MySql
@@ -121,9 +122,34 @@ export class MysqlHelper {
 
 接下来我们继续编写具体的操作方法。
 
+封装Promise对象
+```ts
+const createAsyncAction = async (conn: mysql.Connection, sql: string) => {
+  return new Promise((resolve, reject) => {
+    conn.query(sql, function (err, data) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(data);
+    })
+  })
+}
+```
+
+建表语句
+```sql
+CREATE TABLE `test`.`user1`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `firstname` varchar(255) NULL,
+  `lastname` varchar(255) NULL,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+```
+
 1. 插入操作
 ```ts
-  insert(insertObj: any) {
+  async insert(insertObj: any): Promise<number> {
     var addKey = [];
     var addVal = [];
     //解析insertObj对象，拆分为数组方便后续处理
@@ -152,7 +178,8 @@ export class MysqlHelper {
     str = str.substr(0, str.length - 1);
     str += ");";
     //真查询+异步回调
-    return createAsyncAction(this.conn, str)
+    const result: any = await createAsyncAction(this.conn, str);
+    return result.insertId;
   }
 ```
 
@@ -160,35 +187,34 @@ export class MysqlHelper {
 ```ts
   const mysqlConn = new MysqlHelper('test', 'user1');
   mysqlConn.connect();
-  await mysqlConn.insert({
-    "firstname": "first",
-    "lastname": "last"
-  })
+  const result1 = await mysqlConn.insert({ "firstname": "first", "lastname": "last" });
+  console.log(result1);
 ```
 
 2. 查询操作
 ```ts
-  select(queryObj: any) {
+  async select(selectObj: any): Promise<string> {
     var str = "";
-    if (queryObj == {}) {
+    if (selectObj == {}) {
       str = `select * from ${this.table}`
     }
     else {
       str = `select * from ${this.table} where `;
       // 区分类型
-      for (var i in queryObj) {
-        if (typeof (queryObj[i]) == "string") {
-          str += `${i}='${queryObj[i]}' and `;
+      for (var i in selectObj) {
+        if (typeof (selectObj[i]) == "string") {
+          str += `${i}='${selectObj[i]}' and `;
         }
         else {
-          str += `${i}=${queryObj[i]} and `;
+          str += `${i}=${selectObj[i]} and `;
         }
       }
       // 清除最后的多余字段
       str = str.substr(0, str.length - 4);
     }
     //返回promise
-    return createAsyncAction(this.conn, str)
+    const result = await createAsyncAction(this.conn, str)
+    return JSON.stringify(result);
   }
 ```
 
@@ -196,15 +222,15 @@ export class MysqlHelper {
 ```ts
   const mysqlConn = new MysqlHelper('test', 'user1');
   mysqlConn.connect();
-  const result = await mysqlConn.select({"id": 1});
-  console.log(result);
+  const result2 = await mysqlConn.select({ "firstname": "first" });
+  console.log(result2);
 ```
 
 3. 修改操作
 ```ts
-  async update(selectObj: any, updateObj: any) {
-    //注意，这里的updateObj没必要把所有参数穿进去，只要把需要更新的字段和值传进来就可以，Kid就可以帮你补全剩下的数据了
-    const data: any = await this.select(selectObj)
+  async update(selectObj: any, updateObj: any): Promise<number> {
+    //注意，这里只要把需要更新的字段和值传进来就可以
+    const data: any = JSON.parse(await this.select(selectObj));
     if (data.length == 0) {
       throw new Error('update错误，没有匹配到数据');
     }
@@ -214,13 +240,12 @@ export class MysqlHelper {
     for (let u in updateObj) {
       //用旧数据的键比对传参的键
       if (oldData[u] === undefined)
-      throw new Error('update错误，输入键和源数据不匹配');;
-      oldData[u] = updateObj[u];
+        throw new Error('update错误，输入键和源数据不匹配');
     }
     //区分类型
-    for (let o in oldData) {
-      if (typeof (oldData[o]) == 'string')
-        str += `${o} = '${oldData[o]}',`;
+    for (let o in updateObj) {
+      if (typeof (updateObj[o]) == 'string')
+        str += `${o} = '${updateObj[o]}',`;
       else
         str += `${o} = ${oldData[o]},`;
     }
@@ -236,23 +261,42 @@ export class MysqlHelper {
     }
     // 清除最后的多余字段
     str = str.substr(0, str.length - 4);
-    return createAsyncAction(this.conn, str)
+    const result: any = await createAsyncAction(this.conn, str);
+    return result.affectedRows;
   }
 ```
 
 使用方法
 ```ts
-  await mysqlConn.update({"id": 1}, {"lastname": "newlast"});
-  const newresult = await mysqlConn.select({"id": 1});
-  console.log(newresult);
+  const mysqlConn = new MysqlHelper('test', 'user1');
+  mysqlConn.connect();
+  const result3 = await mysqlConn.update({ "firstname": "first" }, { "lastname": "newlast" });
+  console.log(result3);
 ```
 
 4. 删除操作
 ```ts
+  async delete(delObj: any): Promise<number> {
+    var str = `delete from ${this.table} where `;
+    for (var i in delObj) {
+      if (typeof (delObj[i]) == "string") {
+        str += `${i}='${delObj[i]}' and `;
+      }
+      else {
+        str += `${i}=${delObj[i]} and `;
+      }
+    }
+    // 清除最后的多余字段
+    str = str.substr(0, str.length - 4);
+    const result: any = await createAsyncAction(this.conn, str);
+    return result.affectedRows;
+  }
 ```
 
 使用方法
 ```ts
+  const result4 = await mysqlConn.delete({ "id": result1 });
+  console.log(result4);
 ```
 
 ## 优化mysql方法类
