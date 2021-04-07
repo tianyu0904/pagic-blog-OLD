@@ -276,6 +276,14 @@ router.post('/api/upload', async (ctx) => {
   }
 ```
 
+大部分情况下，我们并不建议将上传的文件存储到项目目录。这里推荐一个库 [os](https://www.npmjs.com/package/os)。
+```ts
+// 使用这个库可以很方便的获取当前系统的用户文件夹。
+import os from 'os';
+
+const homedir = os.homedir();
+```
+
 ## 参考
 - [本文相关示例 github](https://github.com/tianyu666/typescript-demo)
 - [NodeJs koa2实现文件上传](https://www.jianshu.com/p/34d0e1a5ac70)
