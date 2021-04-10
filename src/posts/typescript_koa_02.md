@@ -116,7 +116,27 @@ app.listen(3000, () => {
 
 下面来看一个多中间件加载的例子。
 ```ts
+import Koa from 'koa';
+import format from './middleware/format-response.js';
+import body from './middleware/format-response.js';
+import render from './middleware/render.js';
+import router from './middleware/router.js';
+import static from './middleware/static.js';
 
+const app = new Koa();
+
+// 内容处理
+app.use(format);
+// 解析 body 数据
+app.use(body);
+// 记录请求数据
+app.use(render);
+// 路由
+app.use(router);
+// 静态资源目录
+app.use(static);
+
+exports app;
 ```
 
 ## 参考
