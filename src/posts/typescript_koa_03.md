@@ -307,8 +307,18 @@ CREATE TABLE `test`.`user1`  (
 
 接来下我们一起来实现上面的想法。
 
-## 参考
+首先我们介绍一个概念 `Decorator` 
 
+装饰器模式（Decorator Pattern）允许向一个现有的对象添加新的功能，同时又不改变其结构。这种类型的设计模式属于结构型模式，它是作为现有的类的一个包装。
+
+这种模式创建了一个装饰类，用来包装原有的类，并在保持类方法签名完整性的前提下，提供了额外的功能。
+
+我们前面所想的，通过定义和数据库相同的实体类，来实现数据绑定，使用装饰类可以事半功倍。
+
+我们将在下一篇文章介绍装饰器并优化Mysql方法
+
+## 参考
+- [基于Node.js的简易MysqlHelper](https://blog.csdn.net/Limcong_1999/article/details/103568739)
 
 <footer>
   <nav class="navbar-fixed-bottom text-center navbar-default">
