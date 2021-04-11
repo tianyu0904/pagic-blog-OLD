@@ -14,6 +14,7 @@ timeline:
   - 2021-04-06 16:20:49 查询方法
   - 2021-04-06 17:17:23 修改方法
   - 2021-04-06 18:00:11 删除方法
+  - 2021-06-11 20:23:22 引出装饰类
 ---
 
 # 从零开始的Node.js (03) - MySql
@@ -319,6 +320,7 @@ CREATE TABLE `test`.`user1`  (
 
 ## 参考
 - [基于Node.js的简易MysqlHelper](https://blog.csdn.net/Limcong_1999/article/details/103568739)
+
 
 <footer>
   <nav class="navbar-fixed-bottom text-center navbar-default">
