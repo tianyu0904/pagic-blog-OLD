@@ -19,6 +19,7 @@ timeline:
 ## 利用装饰器修饰实体的属性
 
 ## 参考
+- [装饰器·TypeScript](https://www.tslang.cn/docs/handbook/decorators.html)
 
 
 <footer>
