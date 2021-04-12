@@ -320,6 +320,7 @@ CREATE TABLE `test`.`user1`  (
 
 ## 参考
 - [基于Node.js的简易MysqlHelper](https://blog.csdn.net/Limcong_1999/article/details/103568739)
+- [装饰器·TypeScript](https://www.tslang.cn/docs/handbook/decorators.html)
 
 
 <footer>
