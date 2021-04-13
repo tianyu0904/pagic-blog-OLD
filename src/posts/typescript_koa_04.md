@@ -17,6 +17,17 @@ timeline:
 ## 什么是装饰器
 装饰器目前还是实验性特性，想要使用先要在 `tsconfig.json` 中启用 `experimentalDecorators` 编译器选项。
 
+下面我们利用装饰器来实现一个计算函数运行时间的方法，
+```ts
+function sleep(){
+  return new Promise((resolve, reject)=> {
+    setTimeout(()=>{
+      resolve()
+    }, 3000)
+  });
+}
+```
+
 ## 利用装饰器修饰实体的属性
 
 ## 参考
