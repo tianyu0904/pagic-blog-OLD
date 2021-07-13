@@ -81,6 +81,9 @@ getConfig() {
 }
 ```
 
+## 使用TypeOrm了连接数据库
+了解了装饰器的基本用法之后，我们接下来就可以使用TypeOrm来连接数据库处理数据了。
+
 ## 参考
 - [装饰器·TypeScript](https://www.tslang.cn/docs/handbook/decorators.html)
 
