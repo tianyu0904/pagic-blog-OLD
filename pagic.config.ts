@@ -7,7 +7,7 @@ export default {
     blog: {
         root: '/posts/',
         social: {
-            github: 'https://github.com/tianyu666',
+            github: 'tianyu666',
             email: 'tianyu8125@163.com',
         },
     },

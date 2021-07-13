@@ -43,7 +43,43 @@ myGreeting.greet();
 
 2.求值的结果会被当作函数，由下至上依次调用。
 
-## 利用装饰器修饰实体的属性
+## 利用装饰器实现缓存
+在开发过程中，我们可能需要对某些数据添加缓存，而这些数据可能已经持久化存储了。如果在进程启动时就加载到内存中，如果数据发生了变化就没有办法动态的去更新。
+
+我遇到的一个场景是读取配置文件，这个配置文件可能会被修改，为了避免读取操作的重复发送，需要一个可过期的缓存来存储数据。
+
+```ts
+// 定义了一个缓存函数返回值的装饰器
+const Cache: (milesecond: number) => MethodDecorator = (milesecond: number) => (target: any, key, desc: any) => {
+  const method = desc.value;
+  desc.value = (...args) => {
+    if (desc.cacheData) {
+      return desc.cacheData;
+    }
+    const result = method.call(this, args);
+    desc.cacheData = result;
+    return result;
+  }
+  setInterval(() => {
+    desc.cacheData = null;
+  }, milesecond);
+}
+
+// 利用缓存装饰器在读取文件时进行缓存
+//缓存30s
+@Cache(30000)
+getConfig() {
+  const userPath = os.homedir();
+  const configPath = path.join(userPath, 'config.json');
+  fs.ensureDirSync(path.dirname(configPath));
+  if (fs.existsSync(configPath)) {
+    const config: { [key: string]: string[] } = JSON.parse(fs.readFileSync(configPath, 'utf-8'))
+    return config;
+  } else {
+    return {};
+  }
+}
+```
 
 ## 参考
 - [装饰器·TypeScript](https://www.tslang.cn/docs/handbook/decorators.html)
