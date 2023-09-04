@@ -73,7 +73,7 @@ $ usermod -a -G admin tom
 $ visudo
 ```
 
-`visudo` 命令会打开sudo配置文件`/etc/sudoers`，找到下面第一行，然后在其下方添加第二行。按`Ctrl-X`退出，输入Y，回车键保存。
+`visudo` 命令会打开sudo配置文件`/etc/sudoers`，找到下面第一行，然后在其下方添加第二行。按`Ctrl-S`保存, 按`Ctrl-X`退出。
 > Tips: 如果提示找不到`sudo`，需要手动安装。`spt-get install sudo`。
 
 ```shell
@@ -172,6 +172,7 @@ color_my_love
 
 ```shell
 $ git clone https://github.com/gryf/wombat256grf.git ~/.vim
+$ git clone https://github.com/tomasiser/vim-code-dark ~/.vim
 
 $ vim .vimrc
 ```
@@ -188,6 +189,7 @@ set laststatus=2
 
 "选择配色方案" 此处方案名称按上面选定的链接设置
 colorscheme wombat256grf
+colorscheme codedark
 ```
 
 ## Nginx 安装和配置
@@ -198,7 +200,7 @@ colorscheme wombat256grf
 输入以下命令安装Nginx
 
 ```shell
-$ sudo apt-get install nginx
+$ sudo apt install nginx
 ```
 
 输入以下命令检测Nginx是否安装成功
@@ -265,6 +267,21 @@ sudo nginx -s reload
 # 关闭nginx
 sudo nginx -s stop
 ```
+
+## Nvm 安装
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+
+nvm ls-remote
+nvm install 18
+npm install -g nrm
+
+nrm ls
+nrm current
+nrm use npm
+
+添加自定义源
+nrm add customnpm http://192.168.22.11:8888/repository/npm-public/
 
 ## Node.js 安装和配置
 > Node.js 是一个基于Chrome V8引擎的JavaScript运行环境，使用了一个事件驱动、非阻塞式I/O模型。
